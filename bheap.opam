@@ -1,0 +1,20 @@
+opam-version: "2.0"
+maintainer: "Jean-Christophe.Filliatre@lri.fr"
+authors: "Jean-Christophe Filliâtre"
+license: "LGPL-2.1"
+homepage: "https://www.lri.fr/~filliatr/software.en.html"
+bug-reports: "https://github.com/UnixJunkie/bheap/issues"
+depends: [
+  "ocaml"
+  "dune"
+]
+build: [
+  ["dune" "subst"] {pinned}
+  ["dune" "build" "-p" name]
+]
+dev-repo: "git+https://github.com/dune-universe/bheap.git"
+url {
+  src:
+    "git://github.com/dune-universe/bheap.git#to-dune"
+}
+

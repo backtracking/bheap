@@ -1,5 +1,5 @@
 
-# unreleased
+# 2.0.0
 ## changes
   - change of API: switch a to *minimum* priority queue
   - improved memory footprint with internal shrinking

@@ -1,3 +1,3 @@
 (lang dune 2.0)
-(name ptset)
+(name bheap)
 (formatting (enabled_for dune))

@@ -28,3 +28,17 @@ let () = for i = -200 to 200 do
            assert (x = i);
            assert (H.length h = 200 - i)
          done
+
+let () =
+  let h = H.create ~dummy 42 in
+  for _ = 1 to 1000 do
+    if Random.bool () then H.add h (Random.int 1000);
+    if not (H.is_empty h) && Random.int 3 = 0 then H.remove h
+  done;
+  for _ = 1 to 1000 do
+    if Random.bool () then H.add h (Random.int 1000);
+    if not (H.is_empty h) && Random.int 3 < 2 then H.remove h
+  done;
+  Format.eprintf "%d@." (H.length h)
+
+

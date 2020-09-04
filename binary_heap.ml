@@ -28,13 +28,19 @@ module Make(X : Ordered) = struct
      from [0] to [size - 1]. From an element stored at [i], the left
      (resp. right) subtree, if any, is rooted at [2*i+1] (resp. [2*i+2]). *)
 
-  type t = { mutable size : int; mutable data : X.t array; dummy: X.t }
-         (* invariant 0 <= size <= length data *)
-         (* invariant data[size..] only contains dummy *)
+  type t = {
+      mutable size : int;
+      mutable data : X.t array;
+             dummy : X.t;
+           min_cap : int; (* minimal capacity, as given initially *)
+    }
+  (* invariant 0 <= size <= length data *)
+  (* invariant data[size..] only contains dummy *)
 
   let create ~dummy n =
     if n < 0 || n > Sys.max_array_length then invalid_arg "create";
-    { size = 0; data = Array.make (max 16 n) dummy; dummy = dummy }
+    let n = max 16 n in
+    { size = 0; data = Array.make n dummy; dummy = dummy; min_cap = n }
 
   let length h = h.size
 
@@ -43,13 +49,24 @@ module Make(X : Ordered) = struct
   (* [enlarge] doubles the size of [data] *)
   let enlarge h =
     let n = h.size in
-    assert (n > 0);
+    assert (n > 0 && n = Array.length h.data);
     let n' = min (2 * n) Sys.max_array_length in
     if n' = n then failwith "maximum capacity reached";
     let d = h.data in
     let d' = Array.make n' h.dummy in
     Array.blit d 0 d' 0 n;
     h.data <- d'
+
+  let shrink h =
+    let n = Array.length h.data in
+    let n' = max h.min_cap (n / 2) in
+    assert (h.size <= n' && n' <= n);
+    if n' < n then begin
+      let d = h.data in
+      let d' = Array.make n' h.dummy in
+      Array.blit d 0 d' 0 h.size;
+      h.data <- d'
+    end
 
   let add h x =
     let n = h.size in
@@ -92,7 +109,8 @@ module Make(X : Ordered) = struct
       else
 	d.(i) <- x
     in
-    movedown 0
+    movedown 0;
+    if 4 * h.size < Array.length h.data then shrink h
 
   let pop_minimum h = let m = minimum h in remove h; m
 

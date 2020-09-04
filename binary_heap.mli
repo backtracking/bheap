@@ -43,17 +43,17 @@ module Make(X: Ordered) : sig
       when maximum capacity is reached; complexity $O(log(n))$ *)
   val add : t -> X.t -> unit
 
-  (** [maximum h] returns the maximum element of [h]; raises [EmptyHeap]
+  (** [minimum h] returns the minimum element of [h]; raises [Empty]
       when [h] is empty; complexity $O(1)$ *)
-  val maximum : t -> X.t
+  val minimum : t -> X.t
 
-  (** [remove h] removes the maximum element of [h]; raises [EmptyHeap]
+  (** [remove h] removes the minimum element of [h]; raises [Empty]
       when [h] is empty; complexity $O(log(n))$ *)
   val remove : t -> unit
 
-  (** [pop_maximum h] removes the maximum element of [h] and returns it;
-      raises [EmptyHeap] when [h] is empty; complexity $O(log(n))$ *)
-  val pop_maximum : t -> X.t
+  (** [pop_minimum h] removes the minimum element of [h] and returns it;
+      raises [Empty] when [h] is empty; complexity $O(log(n))$ *)
+  val pop_minimum : t -> X.t
 
   (** usual iterators and combinators; elements are presented in
       arbitrary order *)

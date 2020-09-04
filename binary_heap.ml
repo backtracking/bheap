@@ -57,7 +57,7 @@ module Make(X : Ordered) = struct
     let d = h.data in
     let rec moveup i =
       let fi = (i - 1) / 2 in
-      if i > 0 && X.compare d.(fi) x < 0 then begin
+      if i > 0 && X.compare d.(fi) x > 0 then begin
 	d.(i) <- d.(fi);
 	moveup fi
       end else
@@ -66,7 +66,7 @@ module Make(X : Ordered) = struct
     moveup n;
     h.size <- n + 1
 
-  let maximum h =
+  let minimum h =
     if h.size <= 0 then raise Empty;
     h.data.(0)
 
@@ -82,9 +82,9 @@ module Make(X : Ordered) = struct
       if j < n then
 	let j =
 	  let j' = j + 1 in
-	  if j' < n && X.compare d.(j') d.(j) > 0 then j' else j
+	  if j' < n && X.compare d.(j') d.(j) < 0 then j' else j
 	in
-	if X.compare d.(j) x > 0 then begin
+	if X.compare d.(j) x < 0 then begin
 	  d.(i) <- d.(j);
 	  movedown j
 	end else
@@ -94,7 +94,7 @@ module Make(X : Ordered) = struct
     in
     movedown 0
 
-  let pop_maximum h = let m = maximum h in remove h; m
+  let pop_minimum h = let m = minimum h in remove h; m
 
   let iter f h =
     let d = h.data in

@@ -1,17 +1,12 @@
+
 all:
-	obuild configure
-	obuild build lib-bheap
+	dune build
+
+test:
+	dune runtest
 
 doc:
-	mkdir -p doc
-	ocamldoc -d doc/ -html binary_heap.mli
-
-install: all
-	obuild install
-
-uninstall:
-	ocamlfind -remove bheap
+	dune build @doc
 
 clean:
-	obuild clean
-	rm -rf doc
+	dune clean

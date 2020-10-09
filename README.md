@@ -1,2 +1,6 @@
 # bheap
-OCaml binary heap implementation by Jean-Christophe Filliatre
+Traditional implementation of priority queues
+using a binary heap encoded in a resizable array.
+
+
+

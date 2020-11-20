@@ -23,7 +23,10 @@ end
 
 exception Empty
 
-module Make(X: Ordered) : sig
+module type H = sig
+
+  (** Type of elements in the heap **)
+  type elt
 
   (** Type of priority queues. *)
   type t
@@ -31,7 +34,7 @@ module Make(X: Ordered) : sig
   (** [create ~dummy c] creates a new heap, with initial capacity of [c].
       The value [dummy] is used to fill unused cells of the internal array.
       Note: [dummy] can still be used as a regular value in the queue. *)
-  val create : dummy:X.t -> int -> t
+  val create : dummy:elt -> int -> t
 
   (** [length h] returns the number of elements of [h] *)
   val length : t -> int
@@ -41,11 +44,11 @@ module Make(X: Ordered) : sig
 
   (** [add x h] adds a new element [x] in heap [h]; size of [h] is doubled
       when maximum capacity is reached; complexity $O(log(n))$ *)
-  val add : t -> X.t -> unit
+  val add : t -> elt -> unit
 
   (** [minimum h] returns the minimum element of [h]; raises [Empty]
       when [h] is empty; complexity $O(1)$ *)
-  val minimum : t -> X.t
+  val minimum : t -> elt
 
   (** [remove h] removes the minimum element of [h]; raises [Empty]
       when [h] is empty; complexity $O(log(n))$ *)
@@ -53,12 +56,14 @@ module Make(X: Ordered) : sig
 
   (** [pop_minimum h] removes the minimum element of [h] and returns it;
       raises [Empty] when [h] is empty; complexity $O(log(n))$ *)
-  val pop_minimum : t -> X.t
+  val pop_minimum : t -> elt
 
   (** usual iterators and combinators; elements are presented in
       arbitrary order *)
-  val iter : (X.t -> unit) -> t -> unit
+  val iter : (elt -> unit) -> t -> unit
 
-  val fold : (X.t -> 'a -> 'a) -> t -> 'a -> 'a
+  val fold : (elt -> 'a -> 'a) -> t -> 'a -> 'a
 
 end
+
+module Make(X : Ordered) : H with type elt = X.t

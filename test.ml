@@ -30,6 +30,18 @@ let () = for i = -200 to 200 do
          done
 
 let () =
+  let h = H.create ~dummy 10 in
+  for x = 200 downto 1 do H.add h x done;
+  assert (H.length h = 200);
+  let v = 201 in
+  for x = 1 to 200 do
+    assert (H.minimum h = x);
+    H.remove_and_add h v; assert (H.length h = 200);
+  done;
+  assert (H.fold (+) h 0 = 200 * v);
+  for _ = 1 to 200 do assert (H.pop_minimum h = v) done
+
+let () =
   let h = H.create ~dummy 42 in
   for _ = 1 to 1000 do
     if Random.bool () then H.add h (Random.int 1000);
@@ -40,5 +52,3 @@ let () =
     if not (H.is_empty h) && Random.int 3 < 2 then H.remove h
   done;
   Format.eprintf "%d@." (H.length h)
-
-

@@ -87,6 +87,21 @@ module Make(X : Ordered) = struct
     if h.size <= 0 then raise Empty;
     h.data.(0)
 
+  let rec movedown d n i x =
+    let j = 2 * i + 1 in
+    if j < n then
+      let j =
+	let j' = j + 1 in
+	if j' < n && X.compare d.(j') d.(j) < 0 then j' else j
+      in
+      if X.compare d.(j) x < 0 then begin
+        d.(i) <- d.(j);
+        movedown d n j x
+      end else
+	d.(i) <- x
+    else
+      d.(i) <- x
+
   let remove h =
     if h.size <= 0 then raise Empty;
     let n = h.size - 1 in
@@ -94,25 +109,14 @@ module Make(X : Ordered) = struct
     let d = h.data in
     let x = d.(n) in
     d.(n) <- h.dummy;
-    let rec movedown i =
-      let j = 2 * i + 1 in
-      if j < n then
-	let j =
-	  let j' = j + 1 in
-	  if j' < n && X.compare d.(j') d.(j) < 0 then j' else j
-	in
-	if X.compare d.(j) x < 0 then begin
-	  d.(i) <- d.(j);
-	  movedown j
-	end else
-	  d.(i) <- x
-      else
-	d.(i) <- x
-    in
-    movedown 0;
+    movedown d n 0 x;
     if 4 * h.size < Array.length h.data then shrink h
 
-  let pop_minimum h = let m = minimum h in remove h; m
+  let remove_and_add h x =
+    if h.size = 0 then add h x else movedown h.data h.size 0 x
+
+  let pop_minimum h =
+    let m = minimum h in remove h; m
 
   let iter f h =
     let d = h.data in
@@ -121,9 +125,7 @@ module Make(X : Ordered) = struct
   let fold f h x0 =
     let n = h.size in
     let d = h.data in
-    let rec foldrec x i =
-      if i >= n then x else foldrec (f d.(i) x) (succ i)
-    in
+    let rec foldrec x i = if i >= n then x else foldrec (f d.(i) x) (succ i) in
     foldrec x0 0
 
 end
